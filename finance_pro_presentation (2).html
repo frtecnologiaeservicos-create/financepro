@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>FINANCE PRO — Review de Arquitetura e Custos</title>
+  <style>
+    :root{
+      --bg:#0f1724; /* slate 900 */
+      --card:#0b1220;
+      --muted:#9aa4b2;
+      --accent:#4fd1c5; /* teal */
+      --accent-2:#60a5fa; /* blue */
+      --glass:rgba(255,255,255,0.03);
+      --radius:14px;
+      --max-width:980px;
+      --mono: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:var(--mono);
+      background:linear-gradient(180deg,#071022 0%, #081426 50%);
+      color:#e6eef6;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      padding:40px 20px;
+      display:flex;
+      justify-content:center;
+      align-items:flex-start;
+    }
+    .container{
+      width:100%;
+      max-width:var(--max-width);
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:18px;
+      padding:28px;
+      box-shadow: 0 8px 30px rgba(2,6,23,0.6);
+      border:1px solid rgba(255,255,255,0.02);
+    }
+    header{display:flex;gap:20px;align-items:center;margin-bottom:18px}
+    .logo{
+      width:72px;height:72px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      display:flex;align-items:center;justify-content:center;font-weight:700;color:#052;flex:0 0 72px;
+      box-shadow: 0 6px 20px rgba(96,165,250,0.12);
+    }
+    header h1{font-size:20px;margin:0}
+    header p{margin:0;color:var(--muted);font-size:13px}
+
+    nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+    .nav-btn{background:var(--glass);border-radius:10px;padding:8px 12px;border:1px solid rgba(255,255,255,0.02);cursor:pointer;color:var(--muted);font-size:13px}
+    .nav-btn.active{background:linear-gradient(90deg, rgba(79,209,197,0.12), rgba(96,165,250,0.10));color:var(--accent);border-color:rgba(79,209,197,0.12)}
+
+    main{display:grid;grid-template-columns:1fr 320px;gap:18px}
+    .slides{background:transparent}
+    .slide{
+      background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.00));
+      border-radius:var(--radius);
+      padding:22px;
+      margin-bottom:14px;
+      border:1px solid rgba(255,255,255,0.02);
+    }
+    .slide h2{margin:0 0 10px 0;font-size:18px;color:#fff}
+    .slide p{margin:0;color:var(--muted);line-height:1.45}
+    .bullet{color:var(--muted);margin:8px 0 0 0}
+    .chip{display:inline-block;padding:6px 10px;background:rgba(255,255,255,0.02);border-radius:999px;font-size:13px;color:var(--muted);border:1px solid rgba(255,255,255,0.02)}
+
+    aside{
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:12px;padding:16px;border:1px solid rgba(255,255,255,0.02);
+      height:fit-content;align-self:start
+    }
+    .summary h3{margin:0 0 8px 0}
+    table{width:100%;border-collapse:collapse;margin-top:8px}
+    td,th{padding:6px 8px;border-bottom:1px dashed rgba(255,255,255,0.03);font-size:14px}
+    th{color:var(--muted);text-align:left;font-weight:600}
+    .muted{color:var(--muted);font-size:13px}
+
+    footer{display:flex;justify-content:space-between;align-items:center;margin-top:18px}
+    .actions{display:flex;gap:8px}
+    .btn{background:transparent;border:1px solid rgba(255,255,255,0.04);padding:8px 12px;border-radius:10px;color:var(--muted);cursor:pointer;font-size:13px}
+    .btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#052;border:none}
+
+    /* Print-friendly: each slide as a page */
+    @media print{
+      body{background:white;color:black}
+      .container{box-shadow:none;border:none;padding:10px}
+      main{grid-template-columns:1fr}
+      aside, .nav-btn, footer, header{display:none}
+      .slide{page-break-after:always;border:none}
+    }
+
+    @media (max-width:920px){
+      main{grid-template-columns:1fr}
+      .logo{width:56px;height:56px}
+    }
+
+  body.light-mode .container{background:white;color:#1a1a1a}
+  body.light-mode .slide{border-color:#e5e7eb}
+</style>
+</head>
+<body>
+  <div class="container" role="document">
+    <header>
+
+      <div class="logo" style="font-size:48px">💰</div>
+      <div>
+        <h1>FINANCE PRO — Seu gerente financeiro com AI, disponível 24h por dia.</h1>
+        <p>Uma visão completa do sistema, componentes, integrações e estimativas financeiras.</p>
+      </div>
+    </header>
+
+    <nav aria-label="Navegação das seções">
+      <button class="nav-btn active" data-slide="0">Capa</button>
+      <button class="nav-btn" data-slide="1">Arquitetura</button>
+      <button class="nav-btn" data-slide="2">WhatsApp</button>
+      <button class="nav-btn" data-slide="3">N8N</button>
+      <button class="nav-btn" data-slide="4">Supabase</button>
+      <button class="nav-btn" data-slide="5">Dashboard</button>
+      <button class="nav-btn" data-slide="6">Custos</button>
+      <button class="nav-btn" data-slide="7">Conclusão</button>
+    </nav>
+
+    <main>
+      <section class="slides" id="slides">
+
+        <article class="slide" data-index="0">
+          <h2>FINANCE PRO – Review de Arquitetura e Custos</h2>
+          <p class="muted">Uma visão completa do sistema, componentes, integrações e estimativas financeiras.</p>
+        </article>
+
+        <article class="slide" data-index="1">
+          <h2>Arquitetura Geral</h2>
+          <p class="muted"><strong>Fluxo principal:</strong><br>Usuário (WhatsApp) → API WhatsApp (Z-API / Meta Cloud) → Webhook → N8N → Supabase → Dashboard (Vercel/Next.js)</p>
+          <p class="bullet">Sistema leve, modular e totalmente escalável.</p>
+        </article>
+
+        <article class="slide" data-index="2">
+          <h2>Canal WhatsApp</h2>
+          <ul class="muted">
+            <li>Comunicação simples e direta</li>
+            <li>Mensagens enviadas pelo usuário chegam via API WhatsApp</li>
+            <li>Webhook redireciona tudo para o N8N</li>
+            <li>Experiência fluida e sem app adicional</li>
+          </ul>
+        </article>
+
+        <article class="slide" data-index="3">
+          <h2>Automação N8N</h2>
+          <p class="muted">O cérebro operacional do sistema:</p>
+          <ul class="muted">
+            <li>Recebe e interpreta mensagens</li>
+            <li>Processa informações usando IA</li>
+            <li>Lê PDF, imagens e extratos</li>
+            <li>Salva dados organizados no Supabase</li>
+            <li>Retorna respostas automáticas para o WhatsApp</li>
+          </ul>
+        </article>
+
+        <article class="slide" data-index="4">
+          <h2>Supabase</h2>
+          <p class="muted">Camada de dados central do projeto:</p>
+          <ul class="muted">
+            <li>Banco Postgres escalável</li>
+            <li>Autenticação da dashboard</li>
+            <li>Armazenamento de arquivos (PDFs, imagens)</li>
+            <li>Edge Functions opcionais</li>
+            <li>Excelente para MVP e crescimento</li>
+          </ul>
+        </article>
+
+        <article class="slide" data-index="5">
+          <h2>Dashboard na Vercel</h2>
+          <p class="muted">Interface de análise e gestão:</p>
+          <ul class="muted">
+            <li>Construída com Next.js</li>
+            <li>Relatórios, gráficos e tabelas</li>
+            <li>API Routes para consultas e análises</li>
+            <li>Deploy rápido, escalável e seguro</li>
+            <li>Zero manutenção de servidor</li>
+          </ul>
+        </article>
+
+        <article class="slide" data-index="6">
+          <h2>Custos (resumo por serviço)</h2>
+          <p class="muted">Resumo das estimativas mensais (para ~100 usuários):</p>
+
+          <table role="table" aria-label="Tabela de custos">
+            <thead>
+              <tr><th>Serviço</th><th>Custo mensal</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Supabase</td><td>US$ 0 – 25</td></tr>
+              <tr><td>Vercel</td><td>US$ 0</td></tr>
+              <tr><td>N8N</td><td>US$ 0 – 20</td></tr>
+              <tr><td>WhatsApp API</td><td>US$ 5 – 50</td></tr>
+              <tr><td>OpenAI (IA)</td><td>US$ 20 – 100</td></tr>
+              <tr><th>Total estimado</th><th>US$ 25 – 195</th></tr>
+            </tbody>
+          </table>
+
+          <p class="muted" style="margin-top:8px">Taxa de câmbio aproximada: R$ 5,00 / USD → R$ 125 – 975/mês</p>
+        </article>
+
+        <article class="slide" data-index="7">
+          <h2>Conclusão</h2>
+          <ul class="muted">
+            <li>Arquitetura enxuta, acessível e escalável</li>
+            <li>Baixo custo inicial para operação</li>
+            <li>Ideal para MVP, validação de mercado e evolução contínua</li>
+            <li>WhatsApp + IA como diferencial competitivo</li>
+            <li>Fácil manutenção e expansão futura</li>
+          </ul>
+        </article>
+
+            <article class="slide" data-index="8">
+        <h2>Fluxos Visuais do Sistema</h2>
+        <p class="muted">Fluxos ilustrados para explicar de forma simples como tudo funciona para o cliente.</p>
+
+        <h3 style="margin-top:12px">1. Fluxo de Atendimento no WhatsApp</h3>
+        <div style="padding:16px;border-radius:12px;background:rgba(79,209,197,0.05);border:1px solid rgba(79,209,197,0.15);font-size:14px;line-height:1.6;color:var(--muted)">
+          🧑 Usuário<br>
+          <span style="margin-left:20px">⬇️ Envia mensagem</span><br>
+          💬 WhatsApp API<br>
+          <span style="margin-left:20px">⬇️ Redireciona</span><br>
+          🤖 N8N (IA + Automação)<br>
+          <span style="margin-left:20px">⬇️ Processa e entende</span><br>
+          🗄️ Supabase (Dados do cliente)<br>
+          <span style="margin-left:20px">⬇️ Resposta gerada</span><br>
+          📲 Volta para o WhatsApp do usuário
+        </div>
+
+        <h3 style="margin-top:22px">2. Fluxo Financeiro (Arquivos → Análise → Dashboard)</h3>
+        <div style="padding:16px;border-radius:12px;background:rgba(96,165,250,0.05);border:1px solid rgba(96,165,250,0.15);font-size:14px;line-height:1.6;color:var(--muted)">
+          📄 Arquivos (Extratos, PDFs, imagens)<br>
+          <span style="margin-left:20px">⬇️ Envio pelo usuário</span><br>
+          🤖 N8N (Organiza + extrai + interpreta dados)<br>
+          <span style="margin-left:20px">⬇️ Estrutura informações</span><br>
+          🗄️ Supabase (Base financeira do cliente)<br>
+          <span style="margin-left:20px">⬇️ Disponibiliza dados</span><br>
+          📊 Dashboard (Vercel/Next.js)<br>
+          <span style="margin-left:20px">⬇️ Visualizações, relatórios e insights</span><br>
+          🧑‍💼 Cliente acessa tudo facilmente
+        </div>
+      </article>
+
+        <article class="slide" data-index="9">
+          <h2>Futuras Funcionalidades</h2>
+          <ul class="muted">
+            <li>🔮 <strong>Predição de gastos</strong> com base no histórico dos últimos meses</li>
+            <li>🚨 <strong>Alertas inteligentes</strong> quando o usuário estiver prestes a ultrapassar o orçamento</li>
+            <li>🔐 <strong>Política avançada de compartilhamento de dados financeiros</strong> permitindo controle total sobre quem pode visualizar informações</li>
+            <li>📈 Insights automáticos de economia, categorias que mais consomem orçamento e projeções futuras</li>
+            <li>🤖 Ações automáticas como recomendações de corte de gastos ou reorganização de categorias</li>
+          </ul>
+        </article>
+
+      </section>
+
+      <aside aria-labelledby="aside-title">
+        <div class="summary">
+          <h3 id="aside-title">Resumo rápido</h3>
+          <p class="muted">Apresentação interativa que explica a arquitetura técnica e as estimativas de custo para um MVP Finance Pro usando WhatsApp, N8N, Supabase, Vercel e IA.</p>
+
+          <h4 style="margin-top:12px">Destaques</h4>
+          <p class="muted"><span class="chip">Escalável</span> <span class="chip" style="margin-left:6px">Baixo custo</span> <span class="chip" style="margin-left:6px">Rápido MVP</span></p>
+
+          <h4 style="margin-top:12px">Ações</h4>
+          <p class="muted">Use os botões abaixo para imprimir, salvar ou pedir ajustes no conteúdo/visual.</p>
+
+          <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap">
+            <button class="btn" onclick="window.print()">Imprimir / Salvar PDF</button>
+            <button class="btn primary" id="downloadBtn">Baixar HTML</button>
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <footer>
+      <div class="muted">Gerado para: FINANCE PRO — Revisão rápida</div>
+      <div class="actions">
+        <button class="btn" id="editBtn">Pedir alteração</button>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+
+});
+
+    // Navegação entre 'slides'
+    const navBtns = document.querySelectorAll('.nav-btn');
+    const slides = document.querySelectorAll('.slide');
+    navBtns.forEach(btn => btn.addEventListener('click', e => {
+      navBtns.forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      const idx = Number(btn.dataset.slide);
+      // scroll to slide
+      const target = document.querySelector('.slide[data-index="'+idx+'"]');
+      if(target){
+        target.scrollIntoView({behavior:'smooth',block:'center'});
+      }
+    }));
+
+    // Baixar o HTML atual (gera um arquivo .html com o conteúdo da página)
+    document.getElementById('downloadBtn').addEventListener('click', ()=>{
+      const html = '<!doctype html>' + document.documentElement.outerHTML;
+      const blob = new Blob([html], {type: 'text/html'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'finance_pro_presentation.html';
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+    });
+
+    // Edit request shortcut
